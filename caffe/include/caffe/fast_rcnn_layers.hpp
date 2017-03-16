@@ -13,8 +13,9 @@
 #include "caffe/blob.hpp"
 #include "caffe/common.hpp"
 #include "caffe/layer.hpp"
-#include "caffe/loss_layers.hpp"
 #include "caffe/proto/caffe.pb.h"
+
+#include "caffe/layers/loss_layer.hpp"
 
 namespace caffe {
 

@@ -57,7 +57,8 @@ for im_name in demo_imnames:
     print "Number of the detected text lines: %s"%len(text_lines)
     print "Time: %f"%timer.toc()
 
-    im_with_text_lines=draw_boxes(im, text_lines, caption=im_name, wait=False)
+    im_with_text_lines=draw_boxes(im, text_lines, is_display=False, caption=im_name, wait=False)
+    cv2.imwrite("%s_res.jpg" % im_name[:-4], im_with_text_lines)
 
 print "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 print "Thank you for trying our demo. Press any key to exit..."

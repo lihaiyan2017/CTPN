@@ -10,7 +10,6 @@
 #include <cstdlib>
 
 #include "caffe/common.hpp"
-#include "caffe/layer.hpp"
 
 using std::cout;
 using std::endl;
@@ -51,7 +50,6 @@ template <typename Dtype>
 class CPUDeviceTest : public MultiDeviceTest<CPUDevice<Dtype> > {
 };
 
-
 #ifdef CPU_ONLY
 
 typedef ::testing::Types<CPUDevice<float>,
@@ -75,22 +73,6 @@ typedef ::testing::Types<CPUDevice<float>, CPUDevice<double>,
 
 #endif
 
-#ifdef WITH_PYTHON_LAYER
-class PythonLayerTest : public CPUDeviceTest<float> {
-protected:
-  shared_ptr<Layer<float> > CreatePythonLayer(const char* module, const char* layer, const char* param_str="") {
-    LayerParameter layer_param;
-    layer_param.set_type("Python");
-
-    PythonParameter* python_param=layer_param.mutable_python_param();
-    python_param->set_module(module);
-    python_param->set_layer(layer);
-    python_param->set_param_str(param_str);
-
-    return LayerRegistry<float>::CreateLayer(layer_param);
-  }
-};
-#endif
 }  // namespace caffe
 
 #endif  // CAFFE_TEST_TEST_CAFFE_MAIN_HPP_

@@ -10,7 +10,7 @@
 namespace caffe {
 
 template <typename Dtype>
-__global__ void SmoothL1Forward(const int n, const Dtype* in, Dtype* out,
+__global__ void SmoothL1ForwardGPU(const int n, const Dtype* in, Dtype* out,
     Dtype sigma2) {
   // f(x) = 0.5 * (sigma * x)^2          if |x| < 1 / sigma / sigma
   //        |x| - 0.5 / sigma / sigma    otherwise
@@ -42,7 +42,7 @@ void SmoothL1LossLayer<Dtype>::Forward_gpu(const vector<Blob<Dtype>*>& bottom,
         diff_.gpu_data(),
         diff_.mutable_gpu_data());  // d := w_in * (b0 - b1)
   }
-  SmoothL1Forward<Dtype><<<CAFFE_GET_BLOCKS(count), CAFFE_CUDA_NUM_THREADS>>>(
+  SmoothL1ForwardGPU<Dtype><<<CAFFE_GET_BLOCKS(count), CAFFE_CUDA_NUM_THREADS>>>(
       count, diff_.gpu_data(), errors_.mutable_gpu_data(), sigma2_);
   CUDA_POST_KERNEL_CHECK;
 
@@ -61,7 +61,7 @@ void SmoothL1LossLayer<Dtype>::Forward_gpu(const vector<Blob<Dtype>*>& bottom,
 }
 
 template <typename Dtype>
-__global__ void SmoothL1Backward(const int n, const Dtype* in, Dtype* out,
+__global__ void SmoothL1BackwardGPU(const int n, const Dtype* in, Dtype* out,
     Dtype sigma2) {
   // f'(x) = sigma * sigma * x         if |x| < 1 / sigma / sigma
   //       = sign(x)                   otherwise
@@ -81,7 +81,7 @@ void SmoothL1LossLayer<Dtype>::Backward_gpu(const vector<Blob<Dtype>*>& top,
     const vector<bool>& propagate_down, const vector<Blob<Dtype>*>& bottom) {
   // after forwards, diff_ holds w_in * (b0 - b1)
   int count = diff_.count();
-  SmoothL1Backward<Dtype><<<CAFFE_GET_BLOCKS(count), CAFFE_CUDA_NUM_THREADS>>>(
+  SmoothL1BackwardGPU<Dtype><<<CAFFE_GET_BLOCKS(count), CAFFE_CUDA_NUM_THREADS>>>(
       count, diff_.gpu_data(), diff_.mutable_gpu_data(), sigma2_);
   CUDA_POST_KERNEL_CHECK;
   for (int i = 0; i < 2; ++i) {

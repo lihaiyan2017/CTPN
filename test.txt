@@ -1,0 +1,10 @@
+
+
+q
+:q
+exit
+exit()
+cd ..
+:wq
+:qw
+:x
